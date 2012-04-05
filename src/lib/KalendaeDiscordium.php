@@ -7,16 +7,27 @@
  */
 class KalendaeDiscordium {
 
-    // Apostles list - to display the apostle for the season
-    private $apostles = Array("Hung Mung", "Dr. Van Van Mojo", "Sri Syadasti", "Zarathud", "The Elder");
+    public $seasons = array();
 
-    // Discordian Seasons - to display the name for the season
-    private $discSeasons = array("Chaos" => 0,
+    private $apostles = array("Hung Mung", "Dr. Van Van Mojo", "Sri Syadasti", "Zarathud", "The Elder");
+
+    // Apostle holydays - to display on the 5th of each season
+    private $apostleDays = array("Mungday", "Mojoday", "Syaday", "Zaraday", "Maladay");
+
+    // Seasonal holydays. to display on 50th day of season
+    private $holydays = array("Chaoflux", "Discoflux", "Confuflux", "Bureflux", "Afflux");
+
+    private $seasonStarts = array("Chaos" => 0,
                                  "Discord" => 73,
-                                        "Confusion" => 146,
-                                        "Bureaucracy" => 219,
-                                        "The Aftermath" => 292);
+                                 "Confusion" => 146,
+                                 "Bureaucracy" => 219,
+                                 "The Aftermath" => 292);
 
+    private $days = array("Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange");
+
+    public function __construct() {
+
+    }
 }
 
 
