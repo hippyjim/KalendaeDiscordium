@@ -7,6 +7,27 @@
  */
 class DiscDate extends DateTime {
 
+    const MUNGDAY = "Mungday";
+    const MOJODAY = "Mojoday";
+    const SYADAY = "Syaday";
+    const ZARADAY = "Zaraday";
+    const MALADAY = "Maladay";
+
+    const CHAOFLUX = "Chaoflux";
+    const DISCOFLUX = "Discoflux";
+    const CONFUFLUX = "Confuflux";
+    const BUREFLUX = "Bureflux";
+    const AFFLUX = "Afflux";
+
+    const MUNG = "Hung Mung";
+    const MOJO = "Dr Van Van Mojo";
+    const SYA = "Sri Syadasti";
+    const ZARA = "Zarathud";
+    const MALA = "Malaclypse the Elder";
+
+    const ST_TIBS = "St Tib's Day";
+
+
     const OFFICIAL_KALENDAE_DISCORDIUM_TIMEZONE = 'Etc/GMT+5';
     const GREYFACE_YEAR = 1166;
 
@@ -35,11 +56,11 @@ class DiscDate extends DateTime {
 
     protected $discWeekDays = array("Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange");
 
-    private function __construct($timeString) {
+    public function __construct($timeString) {
         return parent::__construct($timeString, $this->getTimezone());
     }
 
-    private function getTimezone() {
+    public function getTimezone() {
         return new DateTimeZone(self::OFFICIAL_KALENDAE_DISCORDIUM_TIMEZONE);
     }
 
@@ -55,13 +76,17 @@ class DiscDate extends DateTime {
         return $this->format('z');
     }
 
+    public static function createFromFormat($format, $time) {
+        $dateTime = DateTime::createFromFormat($format, $time);
+        return new DiscDate($dateTime->format('Y-m-d'));
+    }
+
     public static function createFromDisc($discDay, $discSeason, $discYear) {
-        $this->thudYear = $discYear - self::GREYFACE_YEAR;
-        $seasonClass = $discSeason . "Season";
-        $this->discSeason = new $seasonClass($discYear);
-        $this->thudDaynum = $this->discSeason->getStartDay();
-        $this->thudDaynum+=$discDay;
-        return self::createFromFormat('z#Y', $this->thudDaynum."#".$this->thudYear);
+        $thudYear = $discYear - self::GREYFACE_YEAR;
+        $discSeason = new Season($discSeason, $discYear);
+        $thudDaynum = $discSeason->getStartDay();
+        $thudDaynum+=$discDay-1;
+        return DiscDate::createFromFormat('z Y', $thudDaynum." ".$thudYear);
     }
 
     public function getApostleDay() {
@@ -89,6 +114,9 @@ class DiscDate extends DateTime {
     }
 
     public function getDiscDay() {
+        $dayNum = $this->getThudDaynum();
+        $season = $this->getDiscSeason();
+        $this->discDay = $dayNum - $this->getDiscSeason()->getStartDay()+1;
         return $this->discDay;
     }
 
@@ -115,7 +143,7 @@ class DiscDate extends DateTime {
         return $this->getThudYear() + self::GREYFACE_YEAR;
     }
 
-    public function getThudDay($format = self::DAY_NAME) {
+    public function getThudDay($format = self::DAY_NUM) {
             switch($format) {
                 case self::DAY_NUM:
                 case self::DAY_NUM_NOLEAD:

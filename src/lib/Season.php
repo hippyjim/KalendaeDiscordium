@@ -9,13 +9,19 @@
 /**
  *
  */
-abstract class Season {
+class Season {
 
     const CHAOS = 'Chaos';
     const DISCORD = "Discord";
     const CONFUSION = "Confusion";
     const BUREAUCRACY = "Bureaucracy";
     const AFTERMATH = "The Aftermath";
+
+    const CHAOS_START_DATE = "-01-01";
+    const DISCORD_START_DATE = "-03-15";
+    const CONFUSION_START_DATE = "-05-27";
+    const BUREAUCRACY_START_DATE = "-08-08";
+    const AFTERMATH_START_DATE = "-10-20";
 
     /**
      * @var string
@@ -30,7 +36,7 @@ abstract class Season {
     /**
      * @var DateTime
      */
-    protected $startThudDate;
+    protected $startThudDate = null;
 
     /**
      * @var string
@@ -43,7 +49,7 @@ abstract class Season {
     protected $apostle;
 
     /**
-     * @var ApostleDay
+     * @var string
      */
     protected $apostleDay = null;
 
@@ -64,9 +70,49 @@ abstract class Season {
 
 
     protected static $seasonNames = array(self::CHAOS, self::DISCORD, self::CONFUSION, self::BUREAUCRACY, self::AFTERMATH);
+    protected static $seasonStarts = array(self::CHAOS_START_DATE, self::DISCORD_START_DATE, self::CONFUSION_START_DATE, self::BUREAUCRACY_START_DATE, self::AFTERMATH_START_DATE);
 
-    public function __construct($year) {
+    public function __construct($name, $year) {
         $this->year = $year;
+        switch($name) {
+            case self::CHAOS:
+                $this->name = self::CHAOS;
+                $this->startThudDateString = self::CHAOS_START_DATE;
+                $this->holyDay = DiscDate::CHAOFLUX;
+                $this->apostle = DiscDate::MUNG;
+                $this->apostleDay = DiscDate::MUNGDAY;
+                break;
+            case self::DISCORD:
+                $this->name = self::DISCORD;
+                $this->startThudDateString = self::DISCORD_START_DATE;
+                $this->holyDay = DiscDate::DISCOFLUX;
+                $this->apostle = DiscDate::MOJO;
+                $this->apostleDay = DiscDate::MOJODAY;
+                break;
+            case self::CONFUSION:
+                $this->name = self::CONFUSION;
+                $this->startThudDateString = self::CONFUSION_START_DATE;
+                $this->holyDay = DiscDate::CONFUFLUX;
+                $this->apostle = DiscDate::SYA;
+                $this->apostleDay = DiscDate::SYADAY;
+                break;
+            case self::BUREAUCRACY:
+                $this->name = self::BUREAUCRACY;
+                $this->startThudDateString = self::BUREAUCRACY_START_DATE;
+                $this->holyDay = DiscDate::BUREFLUX;
+                $this->apostle = DiscDate::ZARA;
+                $this->apostleDay = DiscDate::ZARADAY;
+                break;
+            case self::AFTERMATH:
+                $this->name = self::AFTERMATH;
+                $this->startThudDateString = self::AFTERMATH_START_DATE;
+                $this->holyDay = DiscDate::AFFLUX;
+                $this->apostle = DiscDate::MALA;
+                $this->apostleDay = DiscDate::MALADAY;
+                break;
+            default:
+                break;
+        }
     }
 
     private function getThudYear() {
@@ -74,16 +120,11 @@ abstract class Season {
     }
 
     /**
-     * @return ApostleDay
+     * @return string
      */
     public function getApostleDay() {
-        if (is_null($this->apostleDay)) {
-            $this->buildApostleDay();
-        }
         return $this->apostleDay;
     }
-
-    protected abstract function buildApostleDay();
 
     /**
      * @return string
@@ -103,10 +144,7 @@ abstract class Season {
      * @return string
      */
     public function getApostle() {
-        if (is_null($this->apostleDay)){
-            $this->apostleDay = $this->getApostleDay();
-        }
-        return $this->apostleDay->getApostle();
+        return $this->apostle;
     }
 
 
@@ -114,7 +152,7 @@ abstract class Season {
      * @return string
      */
     public function getStartDay() {
-        if (!$this->startDay) {
+        if (is_null($this->startDay)) {
             $startThudDate = $this->getStartThudDate();
             $this->startDay = $startThudDate->format('z');
         }
@@ -125,20 +163,18 @@ abstract class Season {
      * @return DateTime
      */
     public function getStartThudDate() {
-        return new DateTime($this->getThudYear().$this->startThudDateString);
+        if (is_null($this->startThudDate)) {
+            $this->startThudDate = new DateTime($this->getThudYear().$this->startThudDateString);
+        }
+        return $this->startThudDate;
     }
 
     public static function pickSeasonFromDiscDate(DiscDate $discDate) {
-        $year = $discDate->getDiscYear();
-        $chosenDay = $discDate->getThudDaynum();
-        $returnSeason = new ChaosSeason($year);
-        $nextSeason = new DiscordSeason($year);
-        $seasonNumber = 1;
-        while($nextSeason->getStartDay() >= $chosenDay && $seasonNumber < 5) {
-            $nextSeasonName = self::$seasonNames[$seasonNumber]."Season";
-            $nextSeason = new $nextSeasonName($year);
+        $thudYear = $discDate->getThudYear();
+        $seasonNumber = 0;
+        while ($discDate >= DiscDate::createFromFormat('Y-m-d', $thudYear.self::$seasonStarts[$seasonNumber]) && $seasonNumber < 5) {
             $seasonNumber++;
         }
-        return $returnSeason;
+        return new Season(self::$seasonNames[$seasonNumber-1], $discDate->getDiscYear());
     }
 }
