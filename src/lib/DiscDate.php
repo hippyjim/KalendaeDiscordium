@@ -4,6 +4,7 @@
  * User: jim
  * Date: 06/04/12
  * Time: 14:56
+ * @TODO: fix the issue with dates being 1 day out.
  */
 class DiscDate extends DateTime {
 
@@ -27,6 +28,18 @@ class DiscDate extends DateTime {
 
     const ST_TIBS = "St Tib's Day";
 
+    const SEASON_CHAOS = 'Chaos';
+    const SEASON_DISCORD = "Discord";
+    const SEASON_CONFUSION = "Confusion";
+    const SEASON_BUREAUCRACY = "Bureaucracy";
+    const SEASON_AFTERMATH = "The Aftermath";
+
+    const SEASON_CHAOS_START_DATE = "-01-01";
+    const SEASON_DISCORD_START_DATE = "-03-15";
+    const SEASON_CONFUSION_START_DATE = "-05-27";
+    const SEASON_BUREAUCRACY_START_DATE = "-08-08";
+    const SEASON_AFTERMATH_START_DATE = "-10-20";
+
 
     const OFFICIAL_KALENDAE_DISCORDIUM_TIMEZONE = 'Etc/GMT+5';
     const GREYFACE_YEAR = 1166;
@@ -49,12 +62,18 @@ class DiscDate extends DateTime {
 
     private $discWeekDay;
     private $discDay;
-    private $discSeason = null;
+    private $discSeason;
+    private $discSeasonNum = null;
     private $discYear;
     private $apostleDay = null;
     private $holyDay = null;
 
-    protected $discWeekDays = array("Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange");
+    private $seasonStartDay;
+
+    protected static $discWeekDays = array("Sweetmorn", "Boomtime", "Pungenday", "Prickle-Prickle", "Setting Orange");
+    protected static $seasonNames = array(self::SEASON_CHAOS, self::SEASON_DISCORD, self::SEASON_CONFUSION, self::SEASON_BUREAUCRACY, self::SEASON_AFTERMATH);
+    protected static $seasonStarts = array(self::SEASON_CHAOS_START_DATE, self::SEASON_DISCORD_START_DATE, self::SEASON_CONFUSION_START_DATE, self::SEASON_BUREAUCRACY_START_DATE, self::SEASON_AFTERMATH_START_DATE);
+
 
     public function __construct($timeString) {
         return parent::__construct($timeString, $this->getTimezone());
@@ -83,10 +102,11 @@ class DiscDate extends DateTime {
 
     public static function createFromDisc($discDay, $discSeason, $discYear) {
         $thudYear = $discYear - self::GREYFACE_YEAR;
-        $discSeason = new Season($discSeason, $discYear);
-        $thudDaynum = $discSeason->getStartDay();
-        $thudDaynum+=$discDay-1;
-        return DiscDate::createFromFormat('z Y', $thudDaynum." ".$thudYear);
+        $discSeasonNum = array_search($discSeason, self::$seasonNames);
+        $thudDaynum = $thudYear.self::$seasonStarts[$discSeasonNum];
+        $discDay--;
+        $thudStamp = strtotime("+" . $discDay." day",strtotime($thudDaynum));
+        return DiscDate::createFromFormat('U', $thudStamp);
     }
 
     public function getApostleDay() {
@@ -115,28 +135,73 @@ class DiscDate extends DateTime {
 
     public function getDiscDay() {
         $dayNum = $this->getThudDaynum();
-        $season = $this->getDiscSeason();
-        $this->discDay = $dayNum - $this->getDiscSeason()->getStartDay()+1;
+        echo "\n\n".$dayNum . "-" . $this->getSeasonStartDay();
+        $this->discDay = $dayNum - $this->getSeasonStartDay()+1;
         return $this->discDay;
     }
 
-    /**
-     * @return Season
-     */
-    public function getDiscSeason() {
-        if (is_null($this->discSeason)) {
-            $this->thudDaynum = $this->getThudDaynum();
-            $this->discSeason = Season::pickSeasonFromDiscDate($this);
+    private function getSeasonStartDay() {
+        $startThudDate = new DateTime($this->getThudYear().$this->getSeasonStartThudDateString());
+        $this->seasonStartDay = $startThudDate->format('z');
+        echo "\n\nseasonstartday: " . $this->seasonStartDay;
+        return $this->seasonStartDay;
+    }
+
+    private function getSeasonStartThudDateString() {
+        if (is_null($this->discSeasonNum)) {
+            $this->getDiscSeasonNum();
         }
-        return $this->discSeason;
+        return self::$seasonStarts[$this->discSeasonNum-1];
+    }
+
+    public function getDiscSeasonNum() {
+        if (is_null($this->discSeasonNum)) {
+            $this->thudDaynum = $this->getThudDaynum();
+            $this->discSeasonNum = $this->pickSeason();
+
+        }
+        return $this->discSeasonNum;
+    }
+
+    public function getDiscSeason() {
+        if (is_null($this->discSeasonNum)) {
+            $this->getDiscSeasonNum();
+        }
+        return self::$seasonNames[$this->discSeasonNum-1];
+    }
+
+    public function pickSeason() {
+        $thudYear = $this->getThudYear();
+        $seasonNumber = 0;
+        while ($this > DiscDate::createFromFormat('Y-m-d', $thudYear.self::$seasonStarts[$seasonNumber]) && $seasonNumber < 5) {
+            $seasonNumber++;
+        }
+        return $seasonNumber;
     }
 
     public function getDiscWeekDay() {
+        $dayNum = $this->getThudDaynum();
+        $weekdayNum = $dayNum % 5;
+        $this->discWeekDay = FALSE;
+        if ($this->isStTibsYear($this->getThudYear())){
+            if ($dayNum > 59) {
+                $weekdayNum--;
+                if ($weekdayNum < 0) {
+                    $weekdayNum = 5 + $weekdayNum;
+                }
+            } elseif($dayNum == 59) {
+                $this->discWeekDay = self::ST_TIBS;
+            }
+        }
+
+        if (!$this->discWeekDay) {
+            $this->discWeekDay = self::$discWeekDays[$weekdayNum];
+        }
         return $this->discWeekDay;
     }
 
     public function getDiscWeekDays() {
-        return $this->discWeekDays;
+        return self::$discWeekDays;
     }
 
     public function getDiscYear() {
