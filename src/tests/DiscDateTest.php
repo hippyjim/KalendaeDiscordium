@@ -4,6 +4,8 @@
  * User: hippyjim
  * Date: 08/04/12
  * Time: 16:09
+ * @TODO: comments for each method
+ * @TODO: simplifications & refactoring during comments
  */
 
 
