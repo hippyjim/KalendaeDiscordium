@@ -14,7 +14,10 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
 
 
     private function checkThudYear($thudYear) {
-        $seasonNames = DiscDate::seasons();
+        $seasonNames = DiscDate::getSeasons();
+        $apostleDays = DiscDate::getApostleDays();
+        $apostles = DiscDate::getApostles();
+        $holyDays = DiscDate::getHolydays();
         $year = $thudYear + DiscDate::GREYFACE_YEAR;
         $isStTibs = date('L', strtotime($thudYear."-01-01")) == "1";
         $seasonNum = 0;
@@ -46,6 +49,17 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
             } else {
                 $this->assertEquals($day, $discDate->getDiscDay(), 'Failed asserting that ' . $discDate->getDiscDay() . " matches expected $day for $thudYear-$thudMonth-$thudDay / $year-$seasonNum-$day");
             }
+            if ($day == 5) {
+                $this->assertEquals($apostleDays[$seasonNum], $discDate->getApostleDay());
+            } else {
+                $this->assertFalse($discDate->getApostleDay());
+            }
+            if ($day == 50) {
+                $this->assertEquals($holyDays[$seasonNum], $discDate->getHolyday());
+            } else {
+                $this->assertFalse($discDate->getHolyDay());
+            }
+            $this->assertEquals($apostles[$seasonNum], $discDate->getApostle());
 
 
             $day++;
@@ -57,7 +71,10 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
     }
 
     private function checkDiscYear($thudYear) {
-        $seasonNames = DiscDate::seasons();
+        $seasonNames = DiscDate::getSeasons();
+        $apostleDays = DiscDate::getApostleDays();
+        $apostles = DiscDate::getApostles();
+        $holyDays = DiscDate::getHolydays();
         $year = $thudYear + DiscDate::GREYFACE_YEAR;
         $isStTibs = date('L', strtotime($thudYear."-01-01")) == "1";
         $seasonNum = 0;
@@ -94,7 +111,17 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
             } else {
                 $this->assertEquals($day, $discDate->getDiscDay(), 'Failed asserting that ' . $discDate->getDiscDay() . " matches expected $day for $thudYear-$thudMonth-$thudDay / $year-$seasonNum-$day");
             }
-
+            if ($day == 5) {
+                $this->assertEquals($apostleDays[$seasonNum], $discDate->getApostleDay());
+            } else {
+                $this->assertFalse($discDate->getApostleDay());
+            }
+            if ($day == 50) {
+                $this->assertEquals($holyDays[$seasonNum], $discDate->getHolyday());
+            } else {
+                $this->assertFalse($discDate->getHolyDay());
+            }
+            $this->assertEquals($apostles[$seasonNum], $discDate->getApostle());
 
             $day++;
             if ($day == 74) {

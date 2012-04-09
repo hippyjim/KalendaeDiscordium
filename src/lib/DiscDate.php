@@ -63,8 +63,9 @@ class DiscDate extends DateTime {
     private $discSeason;
     private $discSeasonNum = null;
     private $discYear;
-    private $apostleDay = null;
-    private $holyDay = null;
+    private $apostleDay;
+    private $apostle;
+    private $holyDay;
 
     private $seasonStartDay;
 
@@ -72,6 +73,9 @@ class DiscDate extends DateTime {
     protected static $seasonNames = array(self::SEASON_CHAOS, self::SEASON_DISCORD, self::SEASON_CONFUSION, self::SEASON_BUREAUCRACY, self::SEASON_AFTERMATH);
     protected static $seasonStarts = array(self::SEASON_CHAOS_START_DATE, self::SEASON_DISCORD_START_DATE, self::SEASON_CONFUSION_START_DATE, self::SEASON_BUREAUCRACY_START_DATE, self::SEASON_AFTERMATH_START_DATE);
 
+    protected static $apostles = array("Hung Mung", "Dr. Van Van Mojo", "Sri Syadasti", "Zarathud", "The Elder");
+    protected static $apostleDays = array("Mungday", "Mojoday", "Syaday", "Zaraday", "Maladay");
+    protected static $holydays = array("Chaoflux", "Discoflux", "Confuflux", "Bureflux", "Afflux");
 
     public function __construct($timeString) {
         return parent::__construct($timeString);
@@ -118,26 +122,27 @@ class DiscDate extends DateTime {
         return $discDate;
     }
 
+    public function getApostle() {
+        $this->apostle = self::$apostles[$this->getDiscSeasonNum()];
+        return $this->apostle;
+    }
+
     public function getApostleDay() {
         $day = $this->getDiscDay();
-        if (is_null($this->apostleDay)) {
-            if ($day == 5) {
-                $this->apostleDay = $this->getDiscSeason()->getApostleDay();
-            } else {
-                $this->apostleDay = FALSE;
-            }
+        if ($day == 5) {
+            $this->apostleDay = self::$apostleDays[$this->getDiscSeasonNum()];
+        } else {
+            $this->apostleDay = FALSE;
         }
         return $this->apostleDay;
     }
 
     public function getHolyDay() {
         $day = $this->getDiscDay();
-        if (is_null($this->holyDay)) {
-            if ($day == 50) {
-                $this->holyDay = $this->getDiscSeason()->getHolyDay();
-            } else {
-                $this->holyDay = FALSE;
-            }
+        if ($day == 50) {
+            $this->holyDay = self::$holydays[$this->getDiscSeasonNum()];
+        } else {
+            $this->holyDay = FALSE;
         }
         return $this->holyDay;
     }
@@ -263,7 +268,19 @@ class DiscDate extends DateTime {
         return $this->format('Y');
     }
 
-    public static function seasons() {
+    public static function getSeasons() {
         return self::$seasonNames;
+    }
+
+    public static function getApostles() {
+        return self::$apostles;
+    }
+
+    public static function getApostleDays() {
+        return self::$apostleDays;
+    }
+
+    public static function getHolydays() {
+        return self::$holydays;
     }
 }
