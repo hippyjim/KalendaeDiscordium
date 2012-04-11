@@ -43,10 +43,12 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
             if ($isStTibs) {
                 if ($day == 60 && $seasonNum == 0 && !$hadStTibs) {
                     $this->assertEquals("St Tib's Day", $discDate->getDiscDay(), 'Failed asserting that ' . $discDate->getDiscDay() . " matches expected 'St Tib's Day' for $thudYear-$thudMonth-$thudDay / $year-$seasonNum-$day");
+                    $this->assertEquals("St Tib's Day, ".$seasonNames[$seasonNum].", ".$year, $discDate->format('q, R, X'));
                     $day--;
                     $hadStTibs = TRUE;
                 } else {
                     $this->assertEquals($day, $discDate->getDiscDay(), 'Failed asserting that ' . $discDate->getDiscDay() . " matches expected $day for $thudYear-$thudMonth-$thudDay / $year-$seasonNum-$day");
+                    $this->assertEquals($day.", ".$seasonNames[$seasonNum].", ".$year, $discDate->format('q, R, X'));
                 }
             } else {
                 $this->assertEquals($day, $discDate->getDiscDay(), 'Failed asserting that ' . $discDate->getDiscDay() . " matches expected $day for $thudYear-$thudMonth-$thudDay / $year-$seasonNum-$day");
@@ -105,10 +107,12 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
             if ($isStTibs) {
                 if ($day == 60 && $seasonNum == 0 && !$hadStTibs) {
                     $this->assertEquals("St Tib's Day", $discDate->getDiscDay(), 'Failed asserting that ' . $discDate->getDiscDay() . " matches expected 'St Tib's Day' for $thudYear-$thudMonth-$thudDay / $year-$seasonNum-$day");
+                    $this->assertEquals("St Tib's Day, ".$seasonNames[$seasonNum].", ".$year, $discDate->format('q, R, X'));
                     $day--;
                     $hadStTibs = TRUE;
                 } else {
                     $this->assertEquals($day, $discDate->getDiscDay(), 'Failed asserting that ' . $discDate->getDiscDay() . " matches expected $day for $thudYear-$thudMonth-$thudDay / $year-$seasonNum-$day");
+                    $this->assertEquals($day.", ".$seasonNames[$seasonNum].", ".$year, $discDate->format('q, R, X'));
                 }
             } else {
                 $this->assertEquals($day, $discDate->getDiscDay(), 'Failed asserting that ' . $discDate->getDiscDay() . " matches expected $day for $thudYear-$thudMonth-$thudDay / $year-$seasonNum-$day");
@@ -150,12 +154,18 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
     }
 
 
+    /**
+     * Warning: this is iteratig over every day for 5000 years. It *will* be slow
+     */
     public function testFromThudOneToFiveK() {
         for ($thudYear = 1; $thudYear <= 5000; $thudYear++) {
             $this->checkThudYear($thudYear);
         }
     }
 
+    /**
+     * Warning: this is iteratig over every day for 5000 years. It *will* be slow
+     */
     public function testFromDiscOneToFiveK() {
         for ($thudYear = 1; $thudYear <= 5000; $thudYear++) {
             $this->checkDiscYear($thudYear);

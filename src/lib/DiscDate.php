@@ -284,6 +284,9 @@ class DiscDate extends DateTime {
 
     /**
      * Extends DateTime::createFromFormat to return a DiscDate instance
+     *
+     * @todo: allow us to use the same extra discordian format options as DiscDate::format()
+     *
      * @static
      * @param string $format
      * @param int|string $time
@@ -334,6 +337,65 @@ class DiscDate extends DateTime {
         $discDate->discSeasonNum = $discSeasonNum;
         $discDate->discDay = $discDay;
         return $discDate;
+    }
+
+    /**
+     * Adds extra formatting options to the DateTime::format() method:
+     *
+     * q = discordian day
+     * Q = discordian day with ordinal
+     * E = discordian weekday name
+     * R = discordian season name
+     * X = discordian year
+     *
+     * @todo: Make this suck less
+     * @param $formatString
+     * @return string
+     */
+    public function format($formatString) {
+        // "Some people, when confronted with a problem, think "I know, I'll use regular expressions."
+        // Now they have two problems." - Jamie Zawinski
+        if (strpos($formatString, "q") !== FALSE) {
+            $discDay = $this->getDiscDay();
+            $formatString = preg_replace('/(?<!\\\\)q/', $this->escapeAllChars($discDay), $formatString);
+        }
+        if (strpos($formatString, "Q") !== FALSE) {
+            $discDay = $this->getDiscDay(TRUE);
+            $formatString = preg_replace('/(?<!\\\\)Q/', $this->escapeAllChars($discDay), $formatString);
+        }
+        if (strpos($formatString, "E") !== FALSE) {
+            $discDay = $this->getDiscWeekDay();
+            $formatString = preg_replace('/(?<!\\\\)E/', $this->escapeAllChars($discDay), $formatString);
+        }
+
+        if (strpos($formatString, "R") !== FALSE) {
+            $discSeason = $this->getDiscSeason();
+            $formatString = preg_replace('/(?<!\\\\)R/', $this->escapeAllChars($discSeason), $formatString);
+        }
+
+        if (strpos($formatString, "X") !== FALSE) {
+            $discYear = $this->getDiscYear();
+            $formatString = preg_replace('/(?<!\\\\)X/', $this->escapeAllChars($discYear), $formatString);
+        }
+
+        $formatted = parent::format($formatString);
+        return $formatted;
+    }
+
+    /**
+     * Escapes every character in a word
+     *
+     * Add the 4 slashes required by PHP to escape all characters in the string
+     * before being passed into the DateTime::format() method
+     *
+     * @todo: make this suck less
+     * @param $string
+     * @return string
+     */
+    private function escapeAllChars($string) {
+        $pieces = str_split($string, 1);
+        $retVal = '\\\\'.implode('\\\\', $pieces);
+        return $retVal;
     }
 
     /**
