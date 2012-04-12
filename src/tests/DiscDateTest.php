@@ -4,17 +4,31 @@
  * User: hippyjim
  * Date: 08/04/12
  * Time: 16:09
- * @TODO: comments for each method
- * @TODO: simplifications & refactoring during comments
  */
-
-
 
 include(dirname(__FILE__)."/../lib/DiscDate.php");
 
+/**
+ * PHPUnit tests for the DiscDate class
+ */
 class DiscDateTest extends PHPUnit_Framework_Testcase {
 
+    /**
+     * Called before each test. Sets the I_CANNOT_SEE_THE_FNORD constant to
+     * prevent fnord exceptions during testing
+     */
+    public function setUp() {
+        if (!defined('I_CANNOT_SEE_THE_FNORD')) {
+            define('I_CANNOT_SEE_THE_FNORD', TRUE);
+        }
+    }
 
+    /**
+     * Iterates through every day in the given year and asserts everything
+     * works when creating a DiscDate from thuddite dates
+     *
+     * @param $thudYear
+     */
     private function checkThudYear($thudYear) {
         $seasonNames = DiscDate::getSeasons();
         $apostleDays = DiscDate::getApostleDays();
@@ -74,6 +88,12 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
         }
     }
 
+    /**
+     * Iterates through every day in the given year and asserts everything
+     * works when creating a DiscDate from discordian dates
+     *
+     * @param $thudYear
+     */
     private function checkDiscYear($thudYear) {
         $seasonNames = DiscDate::getSeasons();
         $apostleDays = DiscDate::getApostleDays();
@@ -137,18 +157,30 @@ class DiscDateTest extends PHPUnit_Framework_Testcase {
         }
     }
 
+    /**
+     * Test a non-st-tibs year from thuddite
+     */
     public function testFromThudWithoutStTibs() {
         $this->checkThudYear(2011);
     }
 
+    /**
+     * Test a st-tibs year from thuddite
+     */
     public function testFromThudWithStTibs() {
         $this->checkThudYear(2012);
     }
 
+    /**
+     * Test a non-st-tibs year from discordian
+     */
     public function testFromDiscWithoutStTibs() {
         $this->checkDiscYear(2011);
     }
 
+    /**
+     * Test a st-tibs year from discordian
+     */
     public function testFromDiscWithStTibs() {
         $this->checkDiscYear(2012);
     }

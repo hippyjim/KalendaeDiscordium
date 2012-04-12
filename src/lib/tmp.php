@@ -13,5 +13,5 @@ echo $discDate->format('Y-m-d H:i:s') . " = " . $discDate->getThudYear() ."-" . 
 
 echo $discDate->getHolyDay()." " . $discDate->getDiscDay(true)."  " .$discDate->getDiscSeason()." (" . $discDate->getDiscSeasonNum() . ")" . $discDate->getDiscYear();
 echo "\n";
-echo $discDate->format('E q, R, X');
+echo $discDate->format('E q, R, X')."\n\n";
 

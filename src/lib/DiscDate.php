@@ -249,6 +249,9 @@ class DiscDate extends DateTime {
      * @param $timeString
      */
     public function __construct($timeString) {
+        if (!defined('I_CANNOT_SEE_THE_FNORD')) {
+            $this->fnord();
+        }
         return parent::__construct($timeString);
     }
 
@@ -490,6 +493,20 @@ class DiscDate extends DateTime {
             $this->getDiscSeasonNum();
         }
         return self::$seasonStarts[$this->discSeasonNum];
+    }
+
+    /**
+     * Throws a fnord exception if a fnord is detected
+     *
+     * Use where things are getting too ordered
+     *
+     * @throws Exception
+     */
+    private function fnord() {
+        $fiveByFive = pow(5,5);
+        if (mt_rand(1, $fiveByFive) == $fiveByFive) {
+            throw new Exception('Fnord detected');
+        }
     }
 
     /**
