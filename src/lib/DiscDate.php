@@ -351,6 +351,7 @@ class DiscDate extends DateTime {
      * R = discordian season name
      * X = discordian year
      *
+     * @todo: add holy days, apostle days and apostles to this
      * @todo: Make this suck less
      * @param $formatString
      * @return string
@@ -575,6 +576,11 @@ class DiscDate extends DateTime {
         return $this->discWeekDay;
     }
 
+    public function getDiscWeekDayNum() {
+        $weekdayNum = array_search($this->getDiscWeekDay(), self::$discWeekDays);
+        return $weekdayNum;
+    }
+
     /**
      * Returns the array of discordian weekdays
      * @return array
@@ -689,5 +695,22 @@ class DiscDate extends DateTime {
      */
     public static function getHolydays() {
         return self::$holydays;
+    }
+
+    public static function getWeekdays() {
+        return self::$discWeekDays;
+    }
+
+    public static function getOrdinals() {
+        return self::$ordinals;
+    }
+
+    public static function addOrdinal($number) {
+        if (($number %100) >= 11 && ($number%100) <= 13) {
+            $number.='th';
+        } else {
+            $number.=self::$ordinals[$number % 10];;
+        }
+        return $number;
     }
 }
