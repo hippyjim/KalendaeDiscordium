@@ -63,9 +63,19 @@ h1 {
     margin: 0.5em;
 }
 
+#headerContainer {
+    padding: 10px
+}
+
+#headerContainer img {
+    left: 10px;
+    position: absolute;
+    top: 10px;
+}
+
 #pageBlurb {
-    margin: 1em;
     font-size: 0.8em;
+    margin: 1em 1em 1em 150px;
     text-align: left;
 }
 
@@ -73,6 +83,10 @@ h1 {
     padding: 1em;
     text-align: center;
     width: 100%;
+}
+
+#kalForm {
+    clear: both;
 }
 
 #chosenDate {

@@ -576,6 +576,10 @@ class DiscDate extends DateTime {
         return $this->discWeekDay;
     }
 
+    /**
+     * Returns the discordian weekday number
+     * @return int
+     */
     public function getDiscWeekDayNum() {
         $weekdayNum = array_search($this->getDiscWeekDay(), self::$discWeekDays);
         return $weekdayNum;
@@ -697,14 +701,30 @@ class DiscDate extends DateTime {
         return self::$holydays;
     }
 
+    /**
+     * Returns the array of discordian weekdays
+     * @static
+     * @return array
+     */
     public static function getWeekdays() {
         return self::$discWeekDays;
     }
 
+    /**
+     * Returns the array of ordinal suffixes
+     * @static
+     * @return array
+     */
     public static function getOrdinals() {
         return self::$ordinals;
     }
 
+    /**
+     * Adds an ordinal suffix to the given number
+     * @static
+     * @param $number
+     * @return string
+     */
     public static function addOrdinal($number) {
         if (($number %100) >= 11 && ($number%100) <= 13) {
             $number.='th';

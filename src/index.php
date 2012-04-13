@@ -12,6 +12,7 @@ include_once(dirname(__FILE__)."/lib/KalendaeDiscordium.php");
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="shortcut icon" href="favicon.ico" >
     <meta charset="utf-8">
     <title>Kalendae Discordium - Example</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +25,10 @@ include_once(dirname(__FILE__)."/lib/KalendaeDiscordium.php");
   <body>
   <div id="pageContainer">
       <h1>Kalendae Discordium - Example</h1>
-      <div id="pageBlurb">Below is an example usage for Kalendae Discordium and DiscDate. Feel free to use it in any way you see fit, as long as you include a link back to the BitBucket project for the original source. If you do anything interesting with it, please let me know via bitbucket.</div>
+      <div id="headerContainer">
+        <img src="webassets/discordipedia.png" width="135" height="136" />
+        <div id="pageBlurb">Below is an example usage for Kalendae Discordium and DiscDate. Feel free to use it in any way you see fit, as long as you include a link back to the BitBucket project for the original source. If you do anything interesting with it, please let me know via bitbucket.</div>
+      </div>
       <form id="kalForm">
             <div>
               <?php echo KalendaeDiscordium::monthPicker("thudMonth", "thudMonth", date('F')); ?>
